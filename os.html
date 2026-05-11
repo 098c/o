@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>os</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #000;
+  font-family: system-ui, -apple-system, 'Segoe UI', 'SF Pro Text', 'Ubuntu', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.os-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.os-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.os-view.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+
+.win11-view {
+  background: #000;
+  color: #fff;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.win11-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+
+.win11-loader {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  animation: win11-rotate 4s linear infinite;
+  margin-bottom: 30px;
+}
+
+.win11-loader span {
+  display: block;
+}
+
+.win11-loader span::after {
+  position: absolute;
+  width: calc(40px / 8);
+  height: calc(40px / 8);
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+  display: block;
+  transform-origin: 20px 20px;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes win11-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pip-0::after { transform: rotate(0deg); animation-name: win11-rotate-0; animation-delay: 0.9s; }
+.pip-1::after { transform: rotate(20deg); animation-name: win11-rotate-1; animation-delay: 775ms; }
+.pip-2::after { transform: rotate(40deg); animation-name: win11-rotate-2; animation-delay: 650ms; }
+.pip-3::after { transform: rotate(60deg); animation-name: win11-rotate-3; animation-delay: 525ms; }
+.pip-4::after { transform: rotate(80deg); animation-name: win11-rotate-4; animation-delay: 0.4s; }
+.pip-5::after { transform: rotate(100deg); animation-name: win11-rotate-5; animation-delay: 275ms; }
+
+@keyframes win11-rotate-0 { 0%,20%{ transform: rotate(0deg); } 40%,60%{ transform: rotate(180deg); } 80%,100%{ transform: rotate(360deg); } }
+@keyframes win11-rotate-1 { 0%,20%{ transform: rotate(20deg); } 40%,60%{ transform: rotate(200deg); } 80%,100%{ transform: rotate(380deg); } }
+@keyframes win11-rotate-2 { 0%,20%{ transform: rotate(40deg); } 40%,60%{ transform: rotate(220deg); } 80%,100%{ transform: rotate(400deg); } }
+@keyframes win11-rotate-3 { 0%,20%{ transform: rotate(60deg); } 40%,60%{ transform: rotate(240deg); } 80%,100%{ transform: rotate(420deg); } }
+@keyframes win11-rotate-4 { 0%,20%{ transform: rotate(80deg); } 40%,60%{ transform: rotate(260deg); } 80%,100%{ transform: rotate(440deg); } }
+@keyframes win11-rotate-5 { 0%,20%{ transform: rotate(100deg); } 40%,60%{ transform: rotate(280deg); } 80%,100%{ transform: rotate(460deg); } }
+
+.win11-main-text {
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.macos-view {
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
+
+.macos-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.apple-logo {
+  color: #fff;
+  font-size: 120px;
+  line-height: 1;
+  user-select: none;
+}
+
+.macos-progress {
+  width: 300px;
+  height: 7px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+
+.macos-progress::-webkit-progress-bar {
+  background: #2a2a2a;
+  border-radius: 999px;
+}
+
+.macos-progress::-webkit-progress-value {
+  background: #fff;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.macos-progress::-moz-progress-bar {
+  background: #fff;
+  border-radius: 999px;
+}
+
+.ubuntu-view {
+  background: #2c001e;
+  font-family: 'Ubuntu', -apple-system, system-ui, sans-serif;
+}
+
+.ubuntu-inner {
+  text-align: center;
+}
+
+.ubuntu-logo {
+  width: 270px;
+  margin-bottom: 40px;
+  display: inline-block;
+}
+
+.ubuntu-dots {
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+}
+
+.ubuntu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.ubuntu-dot.active-orange {
+  background: #e95420;
+}
+
+@media screen and (max-width: 768px) {
+  .apple-logo { font-size: 160px; }
+  .macos-progress { width: 260px; }
+  .win11-loader { width: 30px; height: 30px; }
+  .win11-loader span::after { width: calc(30px / 8); height: calc(30px / 8); transform-origin: 15px 15px; }
+  .win11-main-text { font-size: 20px; padding: 0 20px; }
+  .ubuntu-logo { width: 200px; }
+  .ubuntu-dots { gap: 25px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="os-container">
+  <div id="win11View" class="os-view win11-view active">
+    <div class="win11-inner">
+      <div class="win11-loader">
+        <span class="pip-0"></span>
+        <span class="pip-1"></span>
+        <span class="pip-2"></span>
+        <span class="pip-3"></span>
+        <span class="pip-4"></span>
+        <span class="pip-5"></span>
+      </div>
+      <div class="win11-main-text">
+        <span>You are </span>
+        <span id="win11Percent">0</span>
+        <span>% there.</span><br>
+        <span>Please keep your computer on.</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="macosView" class="os-view macos-view">
+    <div class="macos-inner">
+      <div class="apple-logo"></div>
+      <progress id="macosProgress" class="macos-progress" value="7" max="100"></progress>
+    </div>
+  </div>
+
+  <div id="ubuntuView" class="os-view ubuntu-view">
+    <div class="ubuntu-inner">
+      <img class="ubuntu-logo" src="https://www.whitescreen.online/image/ubuntu-22-04/logo.png" alt="Ubuntu Logo">
+      <div class="ubuntu-dots" id="ubuntuDotsContainer">
+        <div class="ubuntu-dot"></div>
+        <div class="ubuntu-dot"></div>
+        <div class="ubuntu-dot"></div>
+        <div class="ubuntu-dot"></div>
+        <div class="ubuntu-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentOS = "win11";
+let win11Percent = 0;
+let macosPercent = 7;
+let ubuntuPhase = 0;
+let win11Interval = null;
+let macosInterval = null;
+let ubuntuInterval = null;
+
+const win11View = document.getElementById('win11View');
+const macosView = document.getElementById('macosView');
+const ubuntuView = document.getElementById('ubuntuView');
+const win11PercentSpan = document.getElementById('win11Percent');
+const macosProgressBar = document.getElementById('macosProgress');
+const ubuntuDots = document.querySelectorAll('#ubuntuDotsContainer .ubuntu-dot');
+
+function stopAllIntervals() {
+  if (win11Interval) { clearInterval(win11Interval); win11Interval = null; }
+  if (macosInterval) { clearInterval(macosInterval); macosInterval = null; }
+  if (ubuntuInterval) { clearInterval(ubuntuInterval); ubuntuInterval = null; }
+}
+
+function updateUbuntuDots() {
+  const n = ubuntuDots.length;
+  const phase = ubuntuPhase;
+  const state = Array(n).fill("white");
+  
+  if (phase <= 5) {
+    for (let i = 0; i < phase; i++) {
+      state[i] = "orange";
+    }
+  } else {
+    for (let i = 0; i < n; i++) state[i] = "orange";
+    let k = phase - 5;
+    for (let i = 0; i < k; i++) {
+      state[i] = "white";
+    }
+  }
+  
+  ubuntuDots.forEach((dot, idx) => {
+    if (state[idx] === "orange") {
+      dot.classList.add("active-orange");
+    } else {
+      dot.classList.remove("active-orange");
+    }
+  });
+  
+  ubuntuPhase = (ubuntuPhase + 1) % 11;
+}
+
+function startUbuntuAnimation() {
+  if (ubuntuInterval) clearInterval(ubuntuInterval);
+  updateUbuntuDots();
+  ubuntuInterval = setInterval(() => {
+    updateUbuntuDots();
+  }, 1000);
+}
+
+function startMacosAnimation() {
+  if (macosInterval) clearInterval(macosInterval);
+  macosProgressBar.value = macosPercent;
+  macosInterval = setInterval(() => {
+    if (macosPercent < 100) {
+      macosPercent++;
+      macosProgressBar.value = macosPercent;
+    }
+  }, 3000);
+}
+
+function startWin11Animation() {
+  if (win11Interval) clearInterval(win11Interval);
+  win11PercentSpan.textContent = win11Percent;
+  win11Interval = setInterval(() => {
+    if (win11Percent < 100) {
+      win11Percent++;
+      win11PercentSpan.textContent = win11Percent;
+    }
+  }, 3000);
+}
+
+function switchTo(osId) {
+  win11View.classList.remove('active');
+  macosView.classList.remove('active');
+  ubuntuView.classList.remove('active');
+  
+  if (osId === 'win11') {
+    win11View.classList.add('active');
+    currentOS = 'win11';
+    stopAllIntervals();
+    startWin11Animation();
+  } else if (osId === 'macos') {
+    macosView.classList.add('active');
+    currentOS = 'macos';
+    stopAllIntervals();
+    startMacosAnimation();
+  } else if (osId === 'ubuntu') {
+    ubuntuView.classList.add('active');
+    currentOS = 'ubuntu';
+    stopAllIntervals();
+    startUbuntuAnimation();
+  }
+}
+
+function initUbuntuDotsRender() {
+  const n = ubuntuDots.length;
+  const phaseLocal = ubuntuPhase;
+  const stateArr = Array(n).fill("white");
+  if (phaseLocal <= 5) {
+    for (let i = 0; i < phaseLocal; i++) stateArr[i] = "orange";
+  } else {
+    for (let i = 0; i < n; i++) stateArr[i] = "orange";
+    let k = phaseLocal - 5;
+    for (let i = 0; i < k; i++) stateArr[i] = "white";
+  }
+  ubuntuDots.forEach((dot, idx) => {
+    if (stateArr[idx] === "orange") dot.classList.add("active-orange");
+    else dot.classList.remove("active-orange");
+  });
+}
+
+win11PercentSpan.textContent = win11Percent;
+macosProgressBar.value = macosPercent;
+initUbuntuDotsRender();
+startWin11Animation();
+
+document.addEventListener("keydown", async (event) => {
+  const key = event.key.toLowerCase();
+  
+  if (key === '1') {
+    event.preventDefault();
+    switchTo('win11');
+  } 
+  else if (key === '2') {
+    event.preventDefault();
+    switchTo('macos');
+  }
+  else if (key === '3') {
+    event.preventDefault();
+    switchTo('ubuntu');
+  }
+  else if (key === 'f') {
+    event.preventDefault();
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+    }
+  }
+});
+
+window.addEventListener('keydown', function(e) {
+  if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === 'f' || e.key === 'F') {
+    if (e.target === document.body || e.target === document.documentElement || e.target.tagName !== 'INPUT') {
+    }
+  }
+});
+</script>
+
+</body>
+</html>
