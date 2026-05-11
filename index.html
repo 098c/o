@@ -253,164 +253,178 @@ body {
 </div>
 
 <script>
-let currentOS = "win11";
-let win11Percent = 0;
-let macosPercent = 7;
-let ubuntuPhase = 0;
-let win11Interval = null;
-let macosInterval = null;
-let ubuntuInterval = null;
+(function() {
+    let currentOS = "win11";
+    let win11Percent = 0;
+    let macosPercent = 7;
+    let ubuntuPhase = 0;
+    let win11Interval = null;
+    let macosInterval = null;
+    let ubuntuInterval = null;
 
-const win11View = document.getElementById('win11View');
-const macosView = document.getElementById('macosView');
-const ubuntuView = document.getElementById('ubuntuView');
-const win11PercentSpan = document.getElementById('win11Percent');
-const macosProgressBar = document.getElementById('macosProgress');
-const ubuntuDots = document.querySelectorAll('#ubuntuDotsContainer .ubuntu-dot');
+    const win11View = document.getElementById('win11View');
+    const macosView = document.getElementById('macosView');
+    const ubuntuView = document.getElementById('ubuntuView');
+    const win11PercentSpan = document.getElementById('win11Percent');
+    const macosProgressBar = document.getElementById('macosProgress');
+    const ubuntuDots = document.querySelectorAll('#ubuntuDotsContainer .ubuntu-dot');
 
-function stopAllIntervals() {
-  if (win11Interval) { clearInterval(win11Interval); win11Interval = null; }
-  if (macosInterval) { clearInterval(macosInterval); macosInterval = null; }
-  if (ubuntuInterval) { clearInterval(ubuntuInterval); ubuntuInterval = null; }
-}
-
-function updateUbuntuDots() {
-  const n = ubuntuDots.length;
-  const phase = ubuntuPhase;
-  const state = Array(n).fill("white");
-  
-  if (phase <= 5) {
-    for (let i = 0; i < phase; i++) {
-      state[i] = "orange";
+    function stopAllIntervals() {
+        if (win11Interval) { clearInterval(win11Interval); win11Interval = null; }
+        if (macosInterval) { clearInterval(macosInterval); macosInterval = null; }
+        if (ubuntuInterval) { clearInterval(ubuntuInterval); ubuntuInterval = null; }
     }
-  } else {
-    for (let i = 0; i < n; i++) state[i] = "orange";
-    let k = phase - 5;
-    for (let i = 0; i < k; i++) {
-      state[i] = "white";
-    }
-  }
-  
-  ubuntuDots.forEach((dot, idx) => {
-    if (state[idx] === "orange") {
-      dot.classList.add("active-orange");
-    } else {
-      dot.classList.remove("active-orange");
-    }
-  });
-  
-  ubuntuPhase = (ubuntuPhase + 1) % 11;
-}
 
-function startUbuntuAnimation() {
-  if (ubuntuInterval) clearInterval(ubuntuInterval);
-  updateUbuntuDots();
-  ubuntuInterval = setInterval(() => {
-    updateUbuntuDots();
-  }, 1000);
-}
-
-function startMacosAnimation() {
-  if (macosInterval) clearInterval(macosInterval);
-  macosProgressBar.value = macosPercent;
-  macosInterval = setInterval(() => {
-    if (macosPercent < 100) {
-      macosPercent++;
-      macosProgressBar.value = macosPercent;
+    function updateUbuntuDots() {
+        const n = ubuntuDots.length;
+        const phase = ubuntuPhase;
+        const state = Array(n).fill("white");
+        
+        if (phase <= 5) {
+            for (let i = 0; i < phase; i++) {
+                state[i] = "orange";
+            }
+        } else {
+            for (let i = 0; i < n; i++) state[i] = "orange";
+            let k = phase - 5;
+            for (let i = 0; i < k; i++) {
+                state[i] = "white";
+            }
+        }
+        
+        ubuntuDots.forEach((dot, idx) => {
+            if (state[idx] === "orange") {
+                dot.classList.add("active-orange");
+            } else {
+                dot.classList.remove("active-orange");
+            }
+        });
+        
+        ubuntuPhase = (ubuntuPhase + 1) % 11;
     }
-  }, 3000);
-}
 
-function startWin11Animation() {
-  if (win11Interval) clearInterval(win11Interval);
-  win11PercentSpan.textContent = win11Percent;
-  win11Interval = setInterval(() => {
-    if (win11Percent < 100) {
-      win11Percent++;
-      win11PercentSpan.textContent = win11Percent;
+    function startUbuntuAnimation() {
+        if (ubuntuInterval) clearInterval(ubuntuInterval);
+        updateUbuntuDots();
+        ubuntuInterval = setInterval(() => {
+            updateUbuntuDots();
+        }, 1000);
     }
-  }, 3000);
-}
 
-function switchTo(osId) {
-  win11View.classList.remove('active');
-  macosView.classList.remove('active');
-  ubuntuView.classList.remove('active');
-  
-  if (osId === 'win11') {
-    win11View.classList.add('active');
-    currentOS = 'win11';
-    stopAllIntervals();
+    function startMacosAnimation() {
+        if (macosInterval) clearInterval(macosInterval);
+        macosProgressBar.value = macosPercent;
+        macosInterval = setInterval(() => {
+            if (macosPercent < 100) {
+                macosPercent++;
+                macosProgressBar.value = macosPercent;
+            }
+        }, 3000);
+    }
+
+    function startWin11Animation() {
+        if (win11Interval) clearInterval(win11Interval);
+        win11PercentSpan.textContent = win11Percent;
+        win11Interval = setInterval(() => {
+            if (win11Percent < 100) {
+                win11Percent++;
+                win11PercentSpan.textContent = win11Percent;
+            }
+        }, 3000);
+    }
+
+    function switchTo(osId) {
+        win11View.classList.remove('active');
+        macosView.classList.remove('active');
+        ubuntuView.classList.remove('active');
+        
+        if (osId === 'win11') {
+            win11View.classList.add('active');
+            currentOS = 'win11';
+            stopAllIntervals();
+            startWin11Animation();
+        } else if (osId === 'macos') {
+            macosView.classList.add('active');
+            currentOS = 'macos';
+            stopAllIntervals();
+            startMacosAnimation();
+        } else if (osId === 'ubuntu') {
+            ubuntuView.classList.add('active');
+            currentOS = 'ubuntu';
+            stopAllIntervals();
+            startUbuntuAnimation();
+        }
+    }
+
+    function initUbuntuDotsRender() {
+        const n = ubuntuDots.length;
+        const phaseLocal = ubuntuPhase;
+        const stateArr = Array(n).fill("white");
+        if (phaseLocal <= 5) {
+            for (let i = 0; i < phaseLocal; i++) stateArr[i] = "orange";
+        } else {
+            for (let i = 0; i < n; i++) stateArr[i] = "orange";
+            let k = phaseLocal - 5;
+            for (let i = 0; i < k; i++) stateArr[i] = "white";
+        }
+        ubuntuDots.forEach((dot, idx) => {
+            if (stateArr[idx] === "orange") dot.classList.add("active-orange");
+            else dot.classList.remove("active-orange");
+        });
+    }
+
+    win11PercentSpan.textContent = win11Percent;
+    macosProgressBar.value = macosPercent;
+    initUbuntuDotsRender();
     startWin11Animation();
-  } else if (osId === 'macos') {
-    macosView.classList.add('active');
-    currentOS = 'macos';
-    stopAllIntervals();
-    startMacosAnimation();
-  } else if (osId === 'ubuntu') {
-    ubuntuView.classList.add('active');
-    currentOS = 'ubuntu';
-    stopAllIntervals();
-    startUbuntuAnimation();
-  }
-}
 
-function initUbuntuDotsRender() {
-  const n = ubuntuDots.length;
-  const phaseLocal = ubuntuPhase;
-  const stateArr = Array(n).fill("white");
-  if (phaseLocal <= 5) {
-    for (let i = 0; i < phaseLocal; i++) stateArr[i] = "orange";
-  } else {
-    for (let i = 0; i < n; i++) stateArr[i] = "orange";
-    let k = phaseLocal - 5;
-    for (let i = 0; i < k; i++) stateArr[i] = "white";
-  }
-  ubuntuDots.forEach((dot, idx) => {
-    if (stateArr[idx] === "orange") dot.classList.add("active-orange");
-    else dot.classList.remove("active-orange");
-  });
-}
+    document.addEventListener("keydown", async (event) => {
+        const key = event.key.toLowerCase();
+        
+        if (key === '1') {
+            event.preventDefault();
+            switchTo('win11');
+        } 
+        else if (key === '2') {
+            event.preventDefault();
+            switchTo('macos');
+        }
+        else if (key === '3') {
+            event.preventDefault();
+            switchTo('ubuntu');
+        }
+        else if (key === 'f') {
+            event.preventDefault();
+            try {
+                if (!document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen();
+                } else {
+                    await document.exitFullscreen();
+                }
+            } catch (err) {
+            }
+        }
+    });
 
-win11PercentSpan.textContent = win11Percent;
-macosProgressBar.value = macosPercent;
-initUbuntuDotsRender();
-startWin11Animation();
+    window.addEventListener('keydown', function(e) {
+        if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === 'f' || e.key === 'F') {
+            if (e.target === document.body || e.target === document.documentElement || e.target.tagName !== 'INPUT') {
+            }
+        }
+    });
 
-document.addEventListener("keydown", async (event) => {
-  const key = event.key.toLowerCase();
-  
-  if (key === '1') {
-    event.preventDefault();
-    switchTo('win11');
-  } 
-  else if (key === '2') {
-    event.preventDefault();
-    switchTo('macos');
-  }
-  else if (key === '3') {
-    event.preventDefault();
-    switchTo('ubuntu');
-  }
-  else if (key === 'f') {
-    event.preventDefault();
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch (err) {
+    const style = document.createElement('style');
+    style.textContent = `* {
+        cursor: none !important;
     }
-  }
-});
-
-window.addEventListener('keydown', function(e) {
-  if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === 'f' || e.key === 'F') {
-    if (e.target === document.body || e.target === document.documentElement || e.target.tagName !== 'INPUT') {
+    html, body, .os-container, .os-view, .win11-view, .macos-view, .ubuntu-view {
+        cursor: none !important;
     }
-  }
-});
+    a, button, div, span, img, progress, .ubuntu-dot, .apple-logo {
+        cursor: none !important;
+    }`;
+    document.head.appendChild(style);
+})();
 </script>
 
 </body>
